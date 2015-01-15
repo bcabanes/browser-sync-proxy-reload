@@ -12,4 +12,4 @@ var server = app.listen(3000, function () {
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/index.html');
 });
-app.get('/path/:proxy', require('./controllers/path/getIndex.js'));
+app.get('/path/:protocol/:url', require('./controllers/path/getIndex.js'));

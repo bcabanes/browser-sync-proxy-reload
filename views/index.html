@@ -25,9 +25,18 @@
             <h1>Browser-sync API</h1>
 
             <form>
-                <label for="path">Paste your url to propagate:</label>
+
+                <div class="row">
+                    <div class="large-6 columns">
+                        <label>Protocol:</label>
+                        <input type="radio" name="protocol" value="http" id="http" checked><label for="http">http</label>
+                        <input type="radio" name="protocol" value="https" id="https"><label for="https">https</label>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="large-12 columns">
+                        <label for="path">Paste your url to propagate:</label>
                         <div class="row collapse">
                             <div class="small-10 columns">
                                 <input id="path" name="path" type="text" placeholder="mywebsite.com">
@@ -59,21 +68,47 @@
             $('form').on('submit', changeProxy);
 
             function changeProxy() {
-                var path = $('#path').val();
 
+                /**
+                 * Clean variables
+                 */
+                var path = $('#path').val(),
+                    protocol = $('input[name="protocol"]:checked').val();
+                var cleanPath = path.replace('http://', '')
+                                    .replace('https://', '');
+                    cleanPath = replaceAll('/', '-x1x-', cleanPath);
+
+                /**
+                 * Ajax call
+                 */
                 $.ajax({
-                        url: './path/' + path,
+                        url: './path/'+ protocol + '/' + cleanPath + '/',
                     })
-                    .done(function(data) {
-                        var template = '<span>[Browser-Sync]</span> Reloaded on ';
-                            template += '<a href="' + data.host + ':' + data.port +'" target="_blank">';
-                            template += data.host + ':' + data.port + '</a>';
-                            template += ' with proxy: <a href="' + data.path + '" target="_blank">' + data.path + '</a>';
-                            template += '<br>';
-                        $('.panel').append(template);
-                    });
+                    .done(buildTemplate);
+
+                /**
+                 * Build template to display infos
+                 */
+                function buildTemplate(data) {
+                    var template = '<span>[Browser-Sync]</span> Reloaded on ';
+                    template += '<a href="http://' + data.host + ':' + data.port +'" target="_blank">';
+                    template += data.host + ':' + data.port + '</a>';
+                    template += ' with proxy: <a href="' + data.path + '" target="_blank">' + data.path + '</a>';
+                    template += '<br>';
+                    $('.panel').append(template);
+                }
 
                 return false;
+            }
+
+            /**
+             * [replaceAll description]
+             * @param {string} find
+             * @param {string} replace
+             * @param {string} str
+             */
+            function replaceAll(find, replace, str) {
+                return str.replace(new RegExp(find, 'g'), replace);
             }
 
         })(jQuery);

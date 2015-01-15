@@ -15,7 +15,6 @@
     }
 
     function reloadBrowser(unexpected, bs) {
-
         // Setting port and host
         host = bs.options.host;
         port = bs.options.port;
@@ -32,17 +31,29 @@
         });
     }
 
+    /**
+     * [replaceAll description]
+     * @param {string} find
+     * @param {string} replace
+     * @param {string} str
+     */
+    function replaceAll(find, replace, str) {
+        return str.replace(new RegExp(find, 'g'), replace);
+    }
+
     module.exports = function(request, response) {
+        var path = request.params.protocol + '://' + request.params.url;
+        path = replaceAll('-x1x-', '/', path);
 
         if(instance) {
-            changeProxy(request.params.proxy);
+            changeProxy(path);
         } else {
-            loadInstance(request.params.proxy);
+            loadInstance(path);
         }
 
         return response.send({
             'host': host,
-            'path': request.params.proxy,
+            'path': path,
             'port': port
         });
     };
