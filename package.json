@@ -1,7 +1,7 @@
 {
     "dependencies": {
         "express": "4.*",
-        "browser-sync": "1.8.*"
+        "browser-sync": "1.9.*"
     },
     "devDependencies": {}
 }
